@@ -211,27 +211,27 @@
 
       <div class="field">
         <label for="startingBalance">Starting balance</label>
-        <div class="input-wrap"><span>$</span><input type="number" id="startingBalance" value="0" min="0" step="100"></div>
+        <div class="input-wrap"><span>$</span><input type="text" inputmode="decimal" class="fmt-number" id="startingBalance" value="0"></div>
       </div>
 
       <div class="field">
         <label for="annualReturn">Annual rate of return</label>
-        <div class="input-wrap"><input type="number" id="annualReturn" value="0" step="0.1"><span>%</span></div>
+        <div class="input-wrap"><input type="text" inputmode="decimal" class="fmt-number" id="annualReturn" value="0"><span>%</span></div>
       </div>
 
       <div class="field">
         <label for="monthlyContribution">Monthly contribution</label>
-        <div class="input-wrap"><span>$</span><input type="number" id="monthlyContribution" value="0" min="0" step="25"></div>
+        <div class="input-wrap"><span>$</span><input type="text" inputmode="decimal" class="fmt-number" id="monthlyContribution" value="0"></div>
       </div>
 
       <div class="field">
         <label for="contributionYears">Years you plan to contribute</label>
-        <div class="input-wrap"><input type="number" id="contributionYears" value="0" min="0" step="1"><span>years</span></div>
+        <div class="input-wrap"><input type="text" inputmode="decimal" class="fmt-number" id="contributionYears" value="0"><span>years</span></div>
       </div>
 
       <div class="field">
         <label for="growthYears">Total years to grow (including any years after you stop contributing)</label>
-        <div class="input-wrap"><input type="number" id="growthYears" value="0" min="0" step="1"><span>years</span></div>
+        <div class="input-wrap"><input type="text" inputmode="decimal" class="fmt-number" id="growthYears" value="0"><span>years</span></div>
       </div>
 
       <hr>
@@ -240,12 +240,12 @@
 
       <div class="field">
         <label for="monthlySpend">Expected monthly spend in retirement</label>
-        <div class="input-wrap"><span>$</span><input type="number" id="monthlySpend" value="0" min="0" step="100"></div>
+        <div class="input-wrap"><span>$</span><input type="text" inputmode="decimal" class="fmt-number" id="monthlySpend" value="0"></div>
       </div>
 
       <div class="field">
         <label for="swr">Safe withdrawal rate</label>
-        <div class="input-wrap"><input type="number" id="swr" value="0" min="0" step="0.1"><span>%</span></div>
+        <div class="input-wrap"><input type="text" inputmode="decimal" class="fmt-number" id="swr" value="0"><span>%</span></div>
       </div>
 
       <div class="fire-box">
@@ -307,12 +307,57 @@
 
   const fmtMoney = (v) => '$' + Math.round(v).toLocaleString('en-US');
   const num = (id) => {
-    const v = parseFloat(document.getElementById(id).value);
+    const raw = document.getElementById(id).value.replace(/,/g, '');
+    const v = parseFloat(raw);
     return isNaN(v) ? 0 : v;
   };
 
   let barChart = null;
   let pieChart = null;
+
+  // --- Live thousands-separator formatting for number-style text inputs ---
+  function sanitizeRaw(value) {
+    let v = value.replace(/[^\d.]/g, '');
+    const firstDot = v.indexOf('.');
+    if (firstDot !== -1) {
+      v = v.slice(0, firstDot + 1) + v.slice(firstDot + 1).replace(/\./g, '');
+    }
+    return v;
+  }
+
+  function formatWithCommas(rawValue) {
+    const v = sanitizeRaw(rawValue);
+    const hasDot = v.includes('.');
+    const [intPartRaw, decPart] = v.split('.');
+    let intPart = intPartRaw.replace(/^0+(?=\d)/, '');
+    if (intPart === '' && hasDot) intPart = '0';
+    const formattedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return hasDot ? formattedInt + '.' + (decPart || '') : formattedInt;
+  }
+
+  function attachCommaFormatting(input) {
+    input.addEventListener('input', () => {
+      const original = input.value;
+      const cursorPos = input.selectionStart;
+      const digitsBeforeCursor = (original.slice(0, cursorPos).match(/[\d.]/g) || []).length;
+
+      input.value = formatWithCommas(original);
+
+      let count = 0;
+      let pos = input.value.length;
+      for (let i = 0; i < input.value.length; i++) {
+        if (/[\d.]/.test(input.value[i])) count++;
+        if (count === digitsBeforeCursor) { pos = i + 1; break; }
+      }
+      input.setSelectionRange(pos, pos);
+    });
+    input.addEventListener('blur', () => {
+      if (input.value === '' || input.value === '.') input.value = '0';
+      else if (input.value.endsWith('.')) input.value = input.value.slice(0, -1);
+    });
+  }
+
+  document.querySelectorAll('.fmt-number').forEach(attachCommaFormatting);
 
   function computeFireNumber() {
     const monthlySpend = num('monthlySpend');
