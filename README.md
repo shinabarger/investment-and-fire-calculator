@@ -2,7 +2,8 @@
 
 # Compound Interest & FIRE Calculator
 
-This is a single-file, static calculator that projects investment growth and compares it against your FIRE (Financial Independence, Retire Early) number, based on your expected monthly spend and safe withdrawal rate.
+
+https://shinabarger.github.io/investment-and-fire-calculator/ is a single-file, static calculator that projects investment growth and compares it against your FIRE (Financial Independence, Retire Early) number, based on your expected monthly spend and safe withdrawal rate.
 
 ## Features
 - All inputs default to 0.
