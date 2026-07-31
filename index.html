@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Compound Interest &amp; FIRE Calculator</title>
+<title>Investment &amp; FIRE Calculator</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js';document.head.appendChild(s);"></script>
 <style>
   :root {
     --dark-green: #2f6f4f;
     --light-green: #8fd19e;
     --yellow: #f4c542;
-    --fire-red: #d9534f;
+    --fire-blue: #1d6fa5;
     --cream: #faf7f0;
     --card-bg: #ffffff;
     --border: #e2ddd0;
@@ -64,6 +64,12 @@
     color: var(--muted);
     margin-bottom: 4px;
   }
+  .field-note {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 4px;
+    line-height: 1.3;
+  }
   .input-wrap {
     display: flex;
     align-items: center;
@@ -90,8 +96,8 @@
     margin: 20px 0;
   }
   .fire-box {
-    background: #fdf3f2;
-    border: 1px solid #f0d3d1;
+    background: #eef5fa;
+    border: 1px solid #cfe1ee;
     border-radius: 8px;
     padding: 14px;
     margin: 14px 0 18px;
@@ -105,7 +111,7 @@
   .fire-box .fire-value {
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--fire-red);
+    color: var(--fire-blue);
   }
   button#calcBtn {
     width: 100%;
@@ -193,17 +199,20 @@
     margin-top: 30px;
     font-size: 0.78rem;
     color: var(--muted);
+    line-height: 1.5;
   }
+  footer p { margin: 0 0 10px; }
+  footer p:last-child { margin-bottom: 0; }
 </style>
 </head>
 <body>
 <div class="container">
   <header>
-    <h1>Compound Interest &amp; FIRE Calculator</h1>
+    <h1>Investment &amp; FIRE Calculator</h1>
     <p>Project your investment growth, then see how it stacks up against your Financial Independence, Retire Early (FIRE) number.</p>
   </header>
 
-  <div id="errorBanner" style="display:none; background:#fdf3f2; border:1px solid #f0d3d1; color:#a83a34; padding:12px 14px; border-radius:8px; margin-bottom:16px; font-size:0.9rem;"></div>
+  <div id="errorBanner" style="display:none; background:#eef5fa; border:1px solid #cfe1ee; color:#124d75; padding:12px 14px; border-radius:8px; margin-bottom:16px; font-size:0.9rem;"></div>
 
   <div class="grid">
     <div class="panel">
@@ -211,27 +220,27 @@
 
       <div class="field">
         <label for="startingBalance">Starting balance</label>
-        <div class="input-wrap"><span>$</span><input type="text" inputmode="decimal" class="fmt-number" id="startingBalance" value="0"></div>
+        <div class="input-wrap"><span>$</span><input type="text" inputmode="decimal" class="fmt-number" id="startingBalance" value="192,900"></div>
       </div>
 
       <div class="field">
         <label for="annualReturn">Annual rate of return</label>
-        <div class="input-wrap"><input type="text" inputmode="decimal" class="fmt-number" id="annualReturn" value="0"><span>%</span></div>
+        <div class="input-wrap"><input type="text" inputmode="decimal" class="fmt-number" id="annualReturn" value="12.4"><span>%</span></div>
       </div>
 
       <div class="field">
         <label for="monthlyContribution">Monthly contribution</label>
-        <div class="input-wrap"><span>$</span><input type="text" inputmode="decimal" class="fmt-number" id="monthlyContribution" value="0"></div>
+        <div class="input-wrap"><span>$</span><input type="text" inputmode="decimal" class="fmt-number" id="monthlyContribution" value="300"></div>
       </div>
 
       <div class="field">
         <label for="contributionYears">Years you plan to contribute</label>
-        <div class="input-wrap"><input type="text" inputmode="decimal" class="fmt-number" id="contributionYears" value="0"><span>years</span></div>
+        <div class="input-wrap"><input type="text" inputmode="decimal" class="fmt-number" id="contributionYears" value="20"><span>years</span></div>
       </div>
 
       <div class="field">
         <label for="growthYears">Total years to grow (including any years after you stop contributing)</label>
-        <div class="input-wrap"><input type="text" inputmode="decimal" class="fmt-number" id="growthYears" value="0"><span>years</span></div>
+        <div class="input-wrap"><input type="text" inputmode="decimal" class="fmt-number" id="growthYears" value="20"><span>years</span></div>
       </div>
 
       <hr>
@@ -240,12 +249,12 @@
 
       <div class="field">
         <label for="monthlySpend">Expected monthly spend in retirement</label>
-        <div class="input-wrap"><span>$</span><input type="text" inputmode="decimal" class="fmt-number" id="monthlySpend" value="0"></div>
+        <div class="input-wrap"><span>$</span><input type="text" inputmode="decimal" class="fmt-number" id="monthlySpend" value="4,000"></div>
       </div>
 
       <div class="field">
         <label for="swr">Safe withdrawal rate</label>
-        <div class="input-wrap"><input type="text" inputmode="decimal" class="fmt-number" id="swr" value="0"><span>%</span></div>
+        <div class="input-wrap"><input type="text" inputmode="decimal" class="fmt-number" id="swr" value="5"><span>%</span></div>
       </div>
 
       <div class="fire-box">
@@ -272,7 +281,7 @@
 
       <div class="tab-pane active" id="tab-bar">
         <canvas id="barChart" height="320"></canvas>
-        <div class="legend-note">Dashed red line marks your FIRE number (only shown once monthly spend and safe withdrawal rate are set).</div>
+        <div class="legend-note">Dashed blue line marks your FIRE number (only shown once monthly spend and safe withdrawal rate are set).</div>
       </div>
 
       <div class="tab-pane" id="tab-pie">
@@ -293,7 +302,8 @@
   </div>
 
   <footer>
-    Assumes monthly compounding and monthly contributions made at the end of each month. Educational estimate only, not financial advice.
+    <p>Assumes monthly compounding and monthly contributions made at the end of each month. Educational estimate only, not financial advice.</p>
+    <p><strong>Default values &amp; sources:</strong> Starting balance is the median U.S. family net worth ($192,900, Federal Reserve Survey of Consumer Finances, 2022, most recent available). Rate of return is the S&amp;P 500's average annual nominal return from 1975&ndash;2025 with dividends reinvested (12.4%) &mdash; this is a nominal figure, not adjusted for inflation, so long-run totals will look larger than they'd be in today's purchasing power. Monthly contribution ($300) is estimated from the median U.S. wage (Economic Policy Institute, 2025) at a typical ~7% retirement plan deferral rate (a commonly cited industry benchmark, e.g. Vanguard's How America Saves). Contribution and growth years (20) and monthly retirement spend ($4,000) are rounded, easy-to-remember planning figures &mdash; adjust them to fit your own timeline and lifestyle. All of these are editable &mdash; swap in your own numbers any time.</p>
   </footer>
 </div>
 
@@ -302,7 +312,7 @@
     darkGreen: '#2f6f4f',
     lightGreen: '#8fd19e',
     yellow: '#f4c542',
-    fireRed: '#d9534f'
+    fireBlue: '#1d6fa5'
   };
 
   const fmtMoney = (v) => '$' + Math.round(v).toLocaleString('en-US');
@@ -421,7 +431,7 @@
         type: 'line',
         label: 'FIRE Number',
         data: data.years.map(() => fireNumber),
-        borderColor: COLORS.fireRed,
+        borderColor: COLORS.fireBlue,
         borderDash: [6, 4],
         borderWidth: 2,
         pointRadius: 0,
@@ -508,7 +518,7 @@
 
   function showError(msg) {
     const el = document.getElementById('errorBanner');
-    el.textContent = msg;
+    el.textContent = 'Error: ' + msg;
     el.style.display = 'block';
   }
 
