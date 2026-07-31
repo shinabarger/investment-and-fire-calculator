@@ -7,6 +7,7 @@ https://shinabarger.github.io/investment-and-fire-calculator/ is a single-file, 
 
 ## Features
 - All inputs default to the loose median values as of July, 2026 for an individual living in the USA. You can adjust the values for your own personalized needs.
+- Nothing on this is saved, it all happens right in the browser. We are not collecting or saving your information whatsoever.
 - Bar graph stacking starting balance, contributions, and interest earned per year, with a dashed horizontal line marking your FIRE number.
 - Pie chart of starting balance vs. contributions vs. interest earned.
 - Year-by-year tabular data.
